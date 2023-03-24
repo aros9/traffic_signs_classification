@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 
-IMG_HEIGHT, IMG_WIDTH = 100, 100
+IMG_HEIGHT, IMG_WIDTH = 32, 32
 
 
 def create_dataset(img_folder):
@@ -19,5 +19,8 @@ def create_dataset(img_folder):
             image /= 255
             img_data_array.append(image)
             class_name.append(dir1)
+
+    target_dict = {k: v for v, k in enumerate(np.unique(class_name))}
+    class_name = [target_dict[class_name[i]] for i in range(len(class_name))]
     return img_data_array, class_name
 
