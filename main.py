@@ -13,8 +13,8 @@ from create_dataset import create_dataset
 
 
 # Create train and test datasets
-train_images, train_labels = create_dataset(r'D:/GitHubProjects/traffic_signs_classification/dataset/test')
-test_images, test_labels = create_dataset(r'D:/GitHubProjects/traffic_signs_classification/train')
+train_images, train_labels = create_dataset(os.getcwd() + r'/dataset/test')
+test_images, test_labels = create_dataset(os.getcwd() + r'/train')
 
 train_images = np.array(train_images)
 train_labels = np.array(train_labels)
