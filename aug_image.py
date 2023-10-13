@@ -3,8 +3,18 @@ File contains functions related to image augmentation used in project.
 """
 
 import tensorflow as tf
+# import keras_cv
+import math
 
-ROT_ANGLE = 45
+ROT_ANGLE = 10
+
+# Tensorflow model used for data augmentation
+aug_model = tf.keras.Sequential([
+    tf.keras.layers.RandomRotation(factor=ROT_ANGLE * math.pi / 180),
+    tf.keras.layers.RandomBrightness(factor=0.01, value_range=[0, 1]),
+    tf.keras.layers.RandomContrast(factor=0.01),
+    tf.keras.layers.GaussianNoise(stddev=0.6)
+])
 
 
 def _gaussian_kernel(kernel_size, sigma, n_channels, dtype):
@@ -50,17 +60,6 @@ def augment_images(img, label):
     :return img, label: Dataset that contains images and corresponding labels.
     """
 
-    # Add random brightness change to image
-    image = tf.image.random_brightness(img, max_delta=0.01)
-
-    # Add random contrast change to image
-    image = tf.image.random_contrast(image, lower=0.01, upper=0.2)
-
-    # Add random rotation to image
-    # TODO: Implement random rotation to image in range <-10; 10> degrees
-
-    # Add gaussian blur to image
-    image = apply_gaussian_blur(image)
-    # TODO: Fix implementation of gaussian blur
+    image = aug_model(img)
 
     return image, label
