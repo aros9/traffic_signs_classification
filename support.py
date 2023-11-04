@@ -12,6 +12,20 @@ IMG_HEIGHT, IMG_WIDTH = 64, 64
 BATCH_SIZE = 2
 
 
+# Assuming you have a list of class labels
+CLASS_LABELS = ['A-1', 'A-6c', 'A-8', 'A-29', 'B-21', 'B-36', 'C-12', 'D-1', 'D-15', 'D-43']
+
+# Create a mapping from class labels to numerical indices
+label_to_index = {label: index for index, label in enumerate(CLASS_LABELS)}
+
+label_encoder = tf.keras.layers.StringLookup(
+    vocabulary=['A-1', 'A-6c', 'A-8', 'A-29', 'B-21', 'B-36', 'C-12', 'D-1', 'D-15', 'D-43'],
+    mask_token=None,
+    num_oov_indices=0,
+    output_mode="int"
+)
+
+
 def create_dataset(img_folder_path: str) -> tuple[list, list]:
     """
     Function that takes image folder path and reads all the data into numpy array.
@@ -52,6 +66,11 @@ def create_dataset(img_folder_path: str) -> tuple[list, list]:
     return img_data_array, class_name
 
 
+def map_label_to_index(label_tensor):
+    label_str = label_tensor.numpy().decode('utf-8')
+    return label_to_index[label_str]
+
+
 def extract_image_and_label(file_path: str):
     """
     Function processes dataset on given file path and extract image files.
@@ -62,6 +81,10 @@ def extract_image_and_label(file_path: str):
 
     # Extract label from file path
     label = tf.strings.split(file_path, os.path.sep)[-2]
+
+    # Apply the mapping function using tf.py_function
+    # label = tf.py_function(lambda x: label_to_index[x.numpy().decode('utf-8')], [label], tf.int64)
+    label = label_encoder(label)
 
     # Read the image
     image = tf.io.read_file(file_path)
@@ -75,7 +98,11 @@ def extract_image_and_label(file_path: str):
 
     # Resize the image
     image = tf.image.resize(image, (IMG_HEIGHT, IMG_WIDTH))
-    image = image/255
+    # image = tf.image.resize_with_pad(image, IMG_HEIGHT, IMG_WIDTH)
+
+    image = image/255.0
+
+    print("Image shape before flattening:", image.shape)
 
     return image, label
 
@@ -127,7 +154,7 @@ def show_images(dataset, num_images=1):
     :param num_images: Number of displayed images.
     """
     for image, l in dataset.take(num_images):
-        print("L = ", l)
+        # print("L = ", l)
         plt.figure()
         plt.imshow(tf.squeeze(image.numpy(), axis=-1), cmap='gray')
         plt.axis('off')

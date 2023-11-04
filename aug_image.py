@@ -1,19 +1,26 @@
 """
 File contains functions related to image augmentation used in project.
+Note that running this script will increase size of dataset stored in
+dataset directory.
 """
 
 import tensorflow as tf
-# import keras_cv
+import os
 import math
 
+from PIL import Image
+
 ROT_ANGLE = 10
+
+INPUT_DIR = os.getcwd() + r'\dataset'
+OUTPUT_DIR = os.getcwd() + r'\dataset_augmented'
 
 # Tensorflow model used for data augmentation
 aug_model = tf.keras.Sequential([
     tf.keras.layers.RandomRotation(factor=ROT_ANGLE * math.pi / 180),
-    tf.keras.layers.RandomBrightness(factor=0.01, value_range=[0, 1]),
-    tf.keras.layers.RandomContrast(factor=0.01),
-    tf.keras.layers.GaussianNoise(stddev=0.6)
+    # tf.keras.layers.RandomBrightness(factor=0.001, value_range=[-0.1, 0.1]),
+    tf.keras.layers.RandomContrast(factor=0.1),
+    tf.keras.layers.GaussianNoise(stddev=0.01)
 ])
 
 
@@ -63,3 +70,41 @@ def augment_images(img, label):
     image = aug_model(img)
 
     return image, label
+
+
+def create_augmented_dataset(input_dir: str, output_dir: str):
+    """
+    Function expands already existing dataset from input_dir and saves augmented files into the output directory.
+
+    :param input_dir: Path to input directory.
+    :param output_dir: Path to output directory.
+    """
+
+    # Get the list of image files in the input directory
+    image_files = [f for f in os.listdir(input_dir) if f.endswith('.jpg') or f.endswith('.png')]
+
+    # Loop through each image file and perform augmentation
+    for image_file in image_files:
+        # Load the image
+        img = Image.open(os.path.join(input_dir, image_file))
+        img_array = tf.keras.preprocessing.image.img_to_array(img)
+        img_array = img_array.reshape((1,) + img_array.shape)  # Reshape to (1, height, width, channels)
+
+        # Generate augmented images
+        i = 0
+        for _ in range(20):  # Generate 20 augmented images per input image
+            augmented_img_array = aug_model(img_array)
+
+            # Save augmented image
+            augmented_img = tf.keras.preprocessing.image.array_to_img(augmented_img_array[0])
+            augmented_img.save(os.path.join(output_dir, f'aug_{i}_{image_file}'))
+            i += 1
+
+
+if __name__ == "__main__":
+
+    # Perform data augmentation and save augmented images
+    for sub_dir in os.listdir(INPUT_DIR):
+        input_path = os.path.join(INPUT_DIR, sub_dir)
+        output_path = os.path.join(OUTPUT_DIR, sub_dir)
+        create_augmented_dataset(input_path, output_path)
