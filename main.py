@@ -6,6 +6,7 @@ import tensorflow as tf
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 from support import (
     create_dataset,
@@ -79,11 +80,36 @@ plt.show()
 test_loss, test_acc = signs_classification_model.evaluate(ds_test)
 print(f'test loss: {test_loss}, test_acc: {test_acc}')
 
-# model.predict()
-
 # TODO: predictions with confusion matrix and clean up the rest of the code
-# predictions = signs_classification_model.predict(ds_validation)
-#
-# print(f'Prediction shape: {predictions.shape}')
-#
-# confusion_matrix = tf.math.confusion_matrix(labels=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], predictions=predictions)
+# Extract images and labels from the validation dataset
+validation_images, validation_labels = zip(*[(image, label) for image, label in ds_validation.map(extract_image_and_label)])
+
+# Convert the extracted images and labels to numpy arrays
+validation_images = np.array(validation_images)
+validation_labels = np.array(validation_labels)
+
+# Make predictions using the model
+predictions = signs_classification_model.predict(validation_images, batch_size=batch_size)
+
+print(f'Prediction shape: {predictions.shape}')
+
+# Evaluate the model performance
+evaluation_result = signs_classification_model.evaluate(validation_images, validation_labels, batch_size=batch_size)
+print(f'Evaluation result: {evaluation_result}')
+
+# Convert predicted probabilities to predicted labels
+predicted_labels = np.argmax(predictions, axis=1)
+
+# Create the confusion matrix using TensorFlow
+conf_matrix = tf.math.confusion_matrix(validation_labels, predicted_labels)
+
+# Extract values from TensorFlow tensor
+conf_matrix = conf_matrix.numpy()
+
+# Display the confusion matrix using a heatmap
+plt.figure(figsize=(10, 10))
+sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", xticklabels=True, yticklabels=True)
+plt.xlabel("Predicted Labels")
+plt.ylabel("True Labels")
+plt.title("Confusion Matrix")
+plt.show()
