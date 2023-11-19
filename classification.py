@@ -80,7 +80,6 @@ plt.show()
 test_loss, test_acc = signs_classification_model.evaluate(ds_test)
 print(f'test loss: {test_loss}, test_acc: {test_acc}')
 
-# TODO: predictions with confusion matrix and clean up the rest of the code
 # Extract images and labels from the validation dataset
 validation_images, validation_labels = zip(*[(image, label) for image, label in ds_validation.map(extract_image_and_label)])
 
