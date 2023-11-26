@@ -23,7 +23,7 @@ def create_model(input_shape):
     return model
 
 
-input_shape = (height, width, channels)
+input_shape = (200, 200, 1)
 
 # Create the model
 model = create_model(input_shape)

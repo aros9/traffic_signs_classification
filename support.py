@@ -7,6 +7,8 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from rembg import remove
+from PIL import Image
 
 IMG_HEIGHT, IMG_WIDTH = 64, 64
 BATCH_SIZE = 2
@@ -24,6 +26,23 @@ label_encoder = tf.keras.layers.StringLookup(
     num_oov_indices=0,
     output_mode="int"
 )
+
+
+def remove_background(input_path: str) -> Image:
+    """
+    Function that removes background from given image.
+
+    :param input_path: Input path to img file.
+
+    :return: Image that has removed background.
+    """
+    # Processing the image
+    input = Image.open(input_path)
+
+    # Removing the background from the given Image
+    output = remove(input)
+
+    return output
 
 
 def create_dataset(img_folder_path: str) -> tuple[list, list]:
