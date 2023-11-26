@@ -54,6 +54,7 @@ def main():
         background_file = random.choice(os.listdir(backgrounds_path))
         background_path = os.path.join(backgrounds_path, background_file)
         background = Image.open(background_path)
+        background = background.resize(200, 200)
 
         # Load random traffic sign image
         traffic_sign_file = random.choice(os.listdir(traffic_signs_path))
