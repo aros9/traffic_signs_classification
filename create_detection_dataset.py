@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 import os
 import random
+from support import remove_background
 
 # Path to the directory containing your traffic sign images
 traffic_signs_path = os.getcwd() + "/dataset/A-1"
@@ -53,11 +54,13 @@ def main():
         background_file = random.choice(os.listdir(backgrounds_path))
         background_path = os.path.join(backgrounds_path, background_file)
         background = Image.open(background_path)
+        background = background.resize(200, 200)
 
         # Load random traffic sign image
         traffic_sign_file = random.choice(os.listdir(traffic_signs_path))
         traffic_sign_path = os.path.join(traffic_signs_path, traffic_sign_file)
-        traffic_sign = Image.open(traffic_sign_path)
+        traffic_sign = remove_background(traffic_sign_path)
+        # traffic_sign = Image.open(traffic_sign_path)
 
         # Random position to overlay traffic sign on background
         x = random.randint(0, background.width - traffic_sign.width)
