@@ -163,3 +163,5 @@ dataset_augmented
 dataset_backup
 test
 backgrounds
+dataset_validation
+notes.txt
