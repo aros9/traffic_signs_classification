@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenDRIVE xmlns="http://www.opendrive.org">
+  <header revMajor="1" revMinor="5" name="Simple Crossroad" />
+
+  <!-- Road Definition -->
+  <road name="road_1" id="1" length="100.0">
+    <link>
+      <predecessor elementType="road" elementId="1" />
+    </link>
+
+    <!-- Road Geometry -->
+    <planView>
+      <geometry s="0.0" x="0.0" y="0.0" hdg="0.0" length="100.0">
+        <line/>
+      </geometry>
+    </planView>
+
+    <!-- Traffic Sign 1 -->
+    <objects>
+      <object id="1" name="stop_sign_1" s="30.0" type="traffic-sign" subtype="stop">
+        <outline>
+          <corner x="0.0" y="0.0"/>
+          <corner x="2.0" y="0.0"/>
+          <corner x="2.0" y="2.0"/>
+          <corner x="0.0" y="2.0"/>
+        </outline>
+      </object>
+    </objects>
+  </road>
+
+  <!-- Road Definition (Crossroad) -->
+  <road name="road_2" id="2" length="100.0">
+    <link>
+      <predecessor elementType="road" elementId="1" />
+    </link>
+
+    <!-- Road Geometry (Crossroad) -->
+    <planView>
+      <geometry s="0.0" x="0.0" y="0.0" hdg="90.0" length="100.0">
+        <line/>
+      </geometry>
+    </planView>
+
+    <!-- Traffic Sign 2 -->
+    <objects>
+      <object id="2" name="stop_sign_2" s="30.0" type="traffic-sign" subtype="stop">
+        <outline>
+          <corner x="0.0" y="0.0"/>
+          <corner x="2.0" y="0.0"/>
+          <corner x="2.0" y="2.0"/>
+          <corner x="0.0" y="2.0"/>
+        </outline>
+      </object>
+    </objects>
+  </road>
+</OpenDRIVE>
