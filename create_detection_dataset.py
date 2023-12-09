@@ -4,16 +4,16 @@ import random
 from support import remove_background
 
 # Path to the directory containing your traffic sign images
-traffic_signs_path = os.getcwd() + "/dataset/A-1"
+traffic_signs_path = os.getcwd() + "/dataset_augmented/D-43"
 
 # Path to the directory containing your background images
 backgrounds_path = os.getcwd() + "/backgrounds"
 
 # Output directory for the new dataset
-output_path = os.getcwd() + "/test"
+output_path = os.getcwd() + "/dataset_detection/dataset"
 
 # Number of images to generate
-num_images = 100
+num_images = 50
 
 
 def overlay_traffic_sign(background: Image, traffic_sign: Image, x: int, y: int):
@@ -30,7 +30,7 @@ def overlay_traffic_sign(background: Image, traffic_sign: Image, x: int, y: int)
     traffic_sign = traffic_sign.resize((int(traffic_sign.width * scale_factor), int(traffic_sign.height * scale_factor)))
 
     # Rotate traffic sign to a random angle (you can customize this)
-    rotation_angle = random.uniform(-30, 30)
+    rotation_angle = random.uniform(-10, 10)
     traffic_sign = traffic_sign.rotate(rotation_angle, expand=True)
 
     # Ensure traffic sign has an alpha channel (transparency)
@@ -41,8 +41,8 @@ def overlay_traffic_sign(background: Image, traffic_sign: Image, x: int, y: int)
     background.paste(traffic_sign, (x, y), traffic_sign)
 
     # Draw bounding box
-    draw = ImageDraw.Draw(background)
-    draw.rectangle([x, y, x + traffic_sign.width, y + traffic_sign.height], outline="red", width=2)
+    # draw = ImageDraw.Draw(background)
+    # draw.rectangle([x, y, x + traffic_sign.width, y + traffic_sign.height], outline="red", width=2)
 
     return background
 
@@ -54,7 +54,7 @@ def main():
         background_file = random.choice(os.listdir(backgrounds_path))
         background_path = os.path.join(backgrounds_path, background_file)
         background = Image.open(background_path)
-        background = background.resize(200, 200)
+        background = background.resize((200, 200))
 
         # Load random traffic sign image
         traffic_sign_file = random.choice(os.listdir(traffic_signs_path))

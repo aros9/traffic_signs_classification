@@ -51,7 +51,7 @@ signs_classification_model = tf.keras.models.Sequential([
     tf.keras.layers.Conv2D(128, (2, 2), activation='relu'),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dense(10)
+    tf.keras.layers.Dense(10, activation='softmax')
 ])
 
 
