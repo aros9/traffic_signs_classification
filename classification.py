@@ -17,7 +17,7 @@ from support import (
 
 # Read file names from directory
 list_dataset = tf.data.Dataset.list_files(os.getcwd() + r'/dataset_augmented/*/*', shuffle=True)
-ds_validation = tf.data.Dataset.list_files(os.getcwd() + r'/dataset/*/*', shuffle=True)
+ds_validation = tf.data.Dataset.list_files(os.getcwd() + r'/dataset_validation/*/*', shuffle=True)
 
 # Create labeled dataset from list of files
 labeled_dataset = list_dataset.map(extract_image_and_label)
