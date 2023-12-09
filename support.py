@@ -7,8 +7,11 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from rembg import remove
+from PIL import Image
 
 IMG_HEIGHT, IMG_WIDTH = 64, 64
+IMG_HEIGHT_DETECTION, IMG_WIDTH_DETECTION = 200, 200
 BATCH_SIZE = 2
 
 
@@ -24,6 +27,27 @@ label_encoder = tf.keras.layers.StringLookup(
     num_oov_indices=0,
     output_mode="int"
 )
+
+label_encoder_detection = 9
+
+def remove_background(input_path: str) -> Image:
+    """
+    Function that removes background and resizes image.
+
+    :param input_path: Input path to img file.
+
+    :return: Image that has removed background.
+    """
+    # Processing the image
+    input_img = Image.open(input_path)
+
+    # Resize image
+    input_img = input_img.resize((IMG_WIDTH, IMG_HEIGHT))
+
+    # Removing the background from the given Image
+    output = remove(input_img)
+
+    return output
 
 
 def create_dataset(img_folder_path: str) -> tuple[list, list]:
@@ -71,6 +95,38 @@ def map_label_to_index(label_tensor):
     return label_to_index[label_str]
 
 
+def extract_image_and_label_detection(file_path: str):
+    """
+    Function processes dataset on given file path and extract image files.
+
+    :param file_path: Path to dataset directory
+
+    """
+
+    # Extract label from file path
+    label = tf.strings.split(file_path, os.path.sep)[-2]
+
+    # Apply the mapping function using tf.py_function
+    # label = tf.py_function(lambda x: label_to_index[x.numpy().decode('utf-8')], [label], tf.int64)
+    label = label_encoder_detection(label)
+
+    # Read the image
+    image = tf.io.read_file(file_path)
+    image = tf.image.decode_image(image, channels=3)
+
+    # Convert RGB to Grayscale
+    image = tf.image.rgb_to_grayscale(image)
+
+    # Set the explicit shape
+    image.set_shape([None, None, 1])
+
+    # Resize the image
+    image = tf.image.resize(image, (IMG_HEIGHT_DETECTION, IMG_WIDTH_DETECTION))
+    # image = tf.image.resize_with_pad(image, IMG_HEIGHT, IMG_WIDTH)
+
+    image = image/255.0
+
+    return image, label
 def extract_image_and_label(file_path: str):
     """
     Function processes dataset on given file path and extract image files.
