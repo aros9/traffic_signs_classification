@@ -130,3 +130,6 @@ plt.show()
 
 test_loss, test_acc = model.evaluate(test_dataset)
 print(f'test loss: {test_loss}, test_acc: {test_acc}')
+
+# Save the entire model as a SavedModel.
+model.save('saved_models/detection_model')
