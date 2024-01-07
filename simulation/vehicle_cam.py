@@ -4,6 +4,10 @@ import time
 import cv2
 import numpy as np
 import keyboard
+import tensorflow as tf
+
+detection_model = tf.keras.models.load_model('../saved_models/detection_model')
+
 
 def main():
     # Connect to the Carla server
@@ -30,8 +34,8 @@ def main():
 
         # Choose a camera sensor blueprint
         camera_bp = blueprint_library.find('sensor.camera.rgb')
-        camera_bp.set_attribute('image_size_x', '800')
-        camera_bp.set_attribute('image_size_y', '600')
+        camera_bp.set_attribute('image_size_x', '200')
+        camera_bp.set_attribute('image_size_y', '200')
         camera_bp.set_attribute('fov', '90')
 
         # Set the relative transform for the camera
@@ -63,12 +67,23 @@ def process_image(image):
     # Remove the alpha channel
     img_array = img_array[:, :, :3]
 
-    # Convert to BGR (OpenCV uses BGR instead of RGB)
-    img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGR)
+    # Convert to grayscale
+    gray_img = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
 
-    # Display the image in real-time
-    cv2.imshow("Camera Feed", img_bgr)
-    cv2.waitKey(1)  # Add a short delay to allow the image to be displayed
+    # Resize the image to 200x200
+    resized_img = cv2.resize(gray_img, (200, 200))
+
+    # Normalize the pixel values to be between 0 and 1
+    normalized_img = resized_img / 255.0
+
+    # Expand dimensions to match the model's input shape (add batch dimension)
+    input_img = np.expand_dims(normalized_img, axis=0)
+
+    # Perform inference with your model (replace with your actual model inference code)
+    model_output = detection_model.predict(input_img)
+
+    # Print or process the model output as needed
+    print("Model Output:", model_output)
 
 
 if __name__ == '__main__':
