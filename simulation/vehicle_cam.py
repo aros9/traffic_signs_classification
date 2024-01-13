@@ -82,8 +82,18 @@ def process_image(image):
     # Perform inference with your model (replace with your actual model inference code)
     model_output = detection_model.predict(input_img)
 
-    # Print or process the model output as needed
-    print("Model Output:", model_output)
+    # Assuming the presence prediction is in the first output and coordinates in the second output
+    presence_prediction = model_output[0][0]
+    coordinates_prediction = model_output[1][0]
+
+    # Print or use the predictions as needed
+    print(f'Presence Prediction: {presence_prediction}')
+    print(f'Coordinates Prediction: {coordinates_prediction}')
+
+    if presence_prediction >= 0.8:
+        print(f'Found image on the coordinates: {coordinates_prediction}')
+    else:
+        print('Traffic sign not found!')
 
 
 if __name__ == '__main__':

@@ -4,16 +4,16 @@ import random
 from support import remove_background
 
 # Path to the directory containing your traffic sign images
-traffic_signs_path = os.getcwd() + "/dataset_augmented/D-43"
+traffic_signs_path = os.getcwd() + "\\dataset\\A-8"
 
 # Path to the directory containing your background images
-backgrounds_path = os.getcwd() + "/backgrounds"
+backgrounds_path = os.getcwd() + "\\backgrounds"
 
 # Output directory for the new dataset
-output_path = os.getcwd() + "/dataset_detection/dataset"
+output_path = os.getcwd() + "\\dataset_detection\\dataset"
 
 # Number of images to generate
-num_images = 50
+num_images = 150
 
 
 def overlay_traffic_sign(background: Image, traffic_sign: Image, x: int, y: int):
@@ -70,7 +70,7 @@ def main():
         image_with_traffic_sign = overlay_traffic_sign(background.copy(), traffic_sign, x, y)
 
         # Save the image with annotation in the filename
-        output_file = f"x{x}_y{y}.png"
+        output_file = f"x{x}_y{y}_t.png"
         output_file_path = os.path.join(output_path, output_file)
         image_with_traffic_sign.save(output_file_path)
 
